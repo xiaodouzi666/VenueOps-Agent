@@ -16,7 +16,7 @@ This file tracks the concrete evidence for the requested P0 and P1 scope. It sep
 | Multi-step task with at least five tool calls | Complete | Agent run emits schema, aggregate, find, find, count, SOP aggregate, and five action writes |
 | Human confirmation for operational actions | Complete | `services/api/app/tools/action_tools.py`, `services/api/app/routes/actions.py`, approval cards in `apps/web/src/components/ActionQueue.tsx` |
 | Reproducible demo reset and crowd surge | Complete | `services/api/app/tools/simulation_tools.py`, `services/api/app/routes/demo.py`, `apps/web/src/components/ScenarioControls.tsx` |
-| Public open-source repo | Pending commit/push | Remote configured as `https://github.com/xiaodouzi666/VenueOps-Agent.git`; repo currently has no commits |
+| Public open-source repo | Complete | Source pushed to `https://github.com/xiaodouzi666/VenueOps-Agent.git` on `main` |
 | License | Complete | `LICENSE` |
 | README | Complete except external hosted/video URLs | `README.md` |
 | 3-minute English demo video | Requires recording and upload | `docs/demo_script.md` provides the script |
@@ -60,6 +60,5 @@ These items cannot be proven complete from this workstation unless the required 
 
 1. Install and authenticate `gcloud`, then run `infra/scripts/enable_gcp_services.sh` and `infra/scripts/deploy.sh`.
 2. Configure MongoDB Atlas URI and Secret Manager secrets for `MONGODB_URI` and `MDB_MCP_CONNECTION_STRING`.
-3. Push the committed source to the configured public GitHub repository.
-4. Record and upload the demo video using `docs/demo_script.md`.
-5. Replace the README hosted URL and video URL once they exist.
+3. Record and upload the demo video using `docs/demo_script.md`.
+4. Replace the README hosted URL and video URL once they exist.
