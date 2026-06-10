@@ -8,7 +8,7 @@ This file tracks the concrete evidence for the requested P0 and P1 scope. It sep
 
 | Requirement | Current status | Evidence |
 | --- | --- | --- |
-| Web app accessible with dashboard and agent chat | Locally complete; deployment scripts present | `apps/web/src/components/DashboardClient.tsx`, `apps/web/src/components/VenueMap.tsx`, `apps/web/src/components/ActionQueue.tsx`, local `http://localhost:3000`, `infra/scripts/deploy.sh` |
+| Web app accessible with dashboard and agent chat | Locally complete; deployment scripts present | `apps/web/src/components/DashboardClient.tsx`, `apps/web/src/components/VenueMap.tsx`, `apps/web/src/components/ActionQueue.tsx`, runtime API proxy in `apps/web/src/app/api/backend/[...path]/route.ts`, local `http://localhost:3000`, `infra/scripts/deploy.sh` |
 | Cloud Run hosted app | Deployment assets complete; actual hosted URL requires gcloud auth, project, and secrets | `services/api/Dockerfile`, `apps/web/Dockerfile`, `infra/cloudbuild-api.yaml`, `infra/scripts/setup_secrets.sh`, `infra/scripts/preflight.sh`, `infra/scripts/deploy.sh`; `gcloud` is installed but no active account/project is configured on this machine |
 | Gemini / Google Agent Platform participates in core reasoning | Vertex/Gemini hook implemented; deterministic demo fallback runs without secrets | `services/api/app/agents/root_agent.py` `_optional_gemini_explanation`, `.env.example`, `README.md` |
 | MongoDB MCP integration | Implemented as MCP stdio path plus deterministic trace fallback | `services/api/app/tools/mongodb_mcp.py`, `docs/mongodb_mcp_setup.md`; traces include `mongodb.find`, `mongodb.aggregate`, `mongodb.count`, `mongodb.collection-schema` |
@@ -39,6 +39,7 @@ Final local verification on 2026-06-10:
 - `npm --workspace apps/web run build`: passed.
 - `docker build -f services/api/Dockerfile -t venueops-api:local .`: passed.
 - `docker build -t venueops-web:local apps/web`: passed.
+- Web proxy smoke: passed through `/api/backend/*`, including health, dashboard snapshot, agent run, approvals, audit, and KPI checks.
 - `python3 scripts/build_demo_video.py`: passed; produced 00:03:00 MP4 with 1280x720 video and AAC audio.
 - Terminal smoke flow: passed health, reset, crowd surge, agent run, >=5 tool calls, 5 pending approvals, approve/reject actions, audit log, KPI improvement, docs page.
 - Built-in browser flow: passed dashboard load, reset, crowd surge, agent run, approve/reject actions, visible action audit trail, tool trace, SOP evidence, before/after KPI, docs page, with zero console errors during the test window.

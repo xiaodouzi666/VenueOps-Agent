@@ -38,7 +38,7 @@ gcloud run deploy venueops-web \
   --image "${WEB_IMAGE}" \
   --region "${GOOGLE_CLOUD_REGION}" \
   --allow-unauthenticated \
-  --set-env-vars "NEXT_PUBLIC_API_BASE_URL=${API_URL}" \
+  --set-env-vars "BACKEND_API_BASE_URL=${API_URL}" \
   --project "${GOOGLE_CLOUD_PROJECT}"
 
 gcloud run services describe venueops-web --region "${GOOGLE_CLOUD_REGION}" --format 'value(status.url)' --project "${GOOGLE_CLOUD_PROJECT}"

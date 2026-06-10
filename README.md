@@ -107,7 +107,10 @@ GOOGLE_CLOUD_PROJECT=your-project-id
 GOOGLE_CLOUD_LOCATION=us-central1
 GOOGLE_GENAI_USE_VERTEXAI=true
 GEMINI_MODEL=gemini-3-pro
+BACKEND_API_BASE_URL=http://localhost:8080
 ```
+
+The web app calls a same-origin Next.js proxy at `/api/backend/*`; Cloud Run sets `BACKEND_API_BASE_URL` at runtime so the browser never needs a baked-in API URL.
 
 ## Security And Guardrails
 
