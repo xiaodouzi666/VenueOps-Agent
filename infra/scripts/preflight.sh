@@ -2,10 +2,13 @@
 set -euo pipefail
 
 REGION="${GOOGLE_CLOUD_REGION:-us-central1}"
+LOCATION="${GOOGLE_CLOUD_LOCATION:-${REGION}}"
 PROJECT="${GOOGLE_CLOUD_PROJECT:-$(gcloud config get-value project 2>/dev/null || true)}"
+GEMINI_MODEL="${GEMINI_MODEL:-gemini-3-pro}"
 MONGODB_URI_SECRET="${MONGODB_URI_SECRET:-MONGODB_URI}"
 MDB_MCP_CONNECTION_STRING_SECRET="${MDB_MCP_CONNECTION_STRING_SECRET:-MDB_MCP_CONNECTION_STRING}"
 REQUIRED_SERVICES=(
+  aiplatform.googleapis.com
   artifactregistry.googleapis.com
   cloudbuild.googleapis.com
   run.googleapis.com
@@ -39,6 +42,12 @@ fi
 
 if [[ -n "${PROJECT}" && "${PROJECT}" != "(unset)" ]]; then
   ok "Google Cloud project ${PROJECT}"
+  ok "Vertex AI location ${LOCATION}"
+  ok "Gemini model ${GEMINI_MODEL}"
+  PROJECT_NUMBER="$(gcloud projects describe "${PROJECT}" --format='value(projectNumber)' 2>/dev/null || true)"
+  if [[ -n "${PROJECT_NUMBER}" ]]; then
+    ok "Cloud Run API service account ${CLOUD_RUN_SERVICE_ACCOUNT:-${PROJECT_NUMBER}-compute@developer.gserviceaccount.com}"
+  fi
 else
   warn "no Google Cloud project; set GOOGLE_CLOUD_PROJECT or gcloud config set project"
 fi

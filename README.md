@@ -15,6 +15,9 @@ Deployment preflight:
 ```bash
 gcloud auth login
 export GOOGLE_CLOUD_PROJECT=your-project-id
+export GOOGLE_CLOUD_REGION=us-central1
+export GOOGLE_CLOUD_LOCATION=us-central1
+export GEMINI_MODEL=gemini-3-pro
 gcloud config set project "$GOOGLE_CLOUD_PROJECT"
 
 infra/scripts/enable_gcp_services.sh
@@ -26,6 +29,8 @@ infra/scripts/setup_secrets.sh
 infra/scripts/preflight.sh
 infra/scripts/deploy.sh
 ```
+
+`deploy.sh` also grants the API Cloud Run service account access to Vertex AI and the MongoDB Secret Manager secrets. Set `CLOUD_RUN_SERVICE_ACCOUNT` before running it if you do not want to use the project compute default service account.
 
 ## Demo Video
 

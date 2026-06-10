@@ -5,6 +5,7 @@ metadata:
 spec:
   template:
     spec:
+      serviceAccountName: PROJECT_NUMBER-compute@developer.gserviceaccount.com
       containers:
         - image: us-central1-docker.pkg.dev/PROJECT_ID/venueops/venueops-api:latest
           ports:
@@ -16,5 +17,23 @@ spec:
               value: venueops_demo
             - name: VENUEOPS_USE_REAL_MCP
               value: "true"
+            - name: VENUEOPS_DEMO_MODE
+              value: "false"
+            - name: GOOGLE_CLOUD_PROJECT
+              value: PROJECT_ID
+            - name: GOOGLE_CLOUD_LOCATION
+              value: us-central1
             - name: GOOGLE_GENAI_USE_VERTEXAI
               value: "true"
+            - name: GEMINI_MODEL
+              value: gemini-3-pro
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: MONGODB_URI
+                  key: latest
+            - name: MDB_MCP_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: MDB_MCP_CONNECTION_STRING
+                  key: latest
