@@ -10,6 +10,11 @@ def health() -> dict:
     return {"status": "ok", "service": "venueops-agent-api"}
 
 
+@router.get("/healthz")
+def healthz() -> dict:
+    return health()
+
+
 @router.get("/readyz")
 def readyz() -> dict:
     repo = get_repository()

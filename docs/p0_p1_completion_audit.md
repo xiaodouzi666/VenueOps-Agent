@@ -8,7 +8,7 @@ This file tracks the concrete evidence for the requested P0 and P1 scope. It sep
 
 | Requirement | Current status | Evidence |
 | --- | --- | --- |
-| Web app accessible with dashboard and agent chat | Locally complete; deployment scripts present | `apps/web/src/components/DashboardClient.tsx`, `apps/web/src/components/VenueMap.tsx`, `apps/web/src/components/ActionQueue.tsx`, runtime API proxy in `apps/web/src/app/api/backend/[...path]/route.ts`, local `http://localhost:3000`, `infra/scripts/deploy.sh` |
+| Web app accessible with dashboard and agent chat | Locally complete; deployment scripts present | `apps/web/src/components/DashboardClient.tsx`, `apps/web/src/components/VenueMap.tsx`, `apps/web/src/components/ActionQueue.tsx`, direct routes `/`, `/dashboard/event_wc_demo_001`, `/agent`, `/actions`, `/docs`, runtime API proxy in `apps/web/src/app/api/backend/[...path]/route.ts`, local `http://localhost:3000`, `infra/scripts/deploy.sh` |
 | Cloud Run hosted app | Deployment assets complete; actual hosted URL requires gcloud auth, project, and secrets | `services/api/Dockerfile`, `apps/web/Dockerfile`, `infra/cloudbuild-api.yaml`, `infra/scripts/setup_secrets.sh`, `infra/scripts/preflight.sh`, `infra/scripts/deploy.sh`; deploy grants API runtime IAM for Vertex AI and MongoDB secrets; `gcloud` is installed but no active account/project is configured on this machine |
 | Gemini / Google Agent Platform participates in core reasoning | Vertex/Gemini planner and explanation hooks implemented; deterministic demo fallback runs without secrets; Cloud Run deploy passes project, location, model env vars, and API service account | `services/api/app/agents/subagents/planner.py`, `services/api/app/agents/root_agent.py` `gemini.plan` trace and `_optional_gemini_explanation`, `.env.example`, `README.md`, `infra/scripts/deploy.sh`, `infra/cloudrun/api-service.yaml` |
 | MongoDB MCP integration | Implemented as MCP stdio path plus deterministic trace fallback | `services/api/app/tools/mongodb_mcp.py`, `docs/mongodb_mcp_setup.md`; traces include `mongodb.find`, `mongodb.aggregate`, `mongodb.count`, `mongodb.collection-schema` |
@@ -33,19 +33,21 @@ This file tracks the concrete evidence for the requested P0 and P1 scope. It sep
 
 ## Verification Commands
 
-Final local verification on 2026-06-10 after the Cloud Run runtime env/IAM fix and Gemini planner integration:
+Final local verification on 2026-06-10 after the Cloud Run runtime env/IAM fix, Gemini planner integration, and route/smoke hardening:
 
-- `services/api/.venv/bin/pytest`: passed, 5 tests.
+- `services/api/.venv/bin/pytest`: passed, 6 tests.
 - `npm --workspace apps/web run build`: passed.
 - `bash -n infra/scripts/enable_gcp_services.sh infra/scripts/preflight.sh infra/scripts/setup_secrets.sh infra/scripts/deploy.sh`: passed.
 - YAML parse check for `infra/cloudrun/api-service.yaml`, `infra/cloudrun/web-service.yaml`, and `infra/cloudbuild-api.yaml`: passed.
+- `docker compose config`: passed; web service uses `BACKEND_API_BASE_URL=http://api:8080`.
 - `infra/scripts/preflight.sh`: gcloud installed; still blocked by missing active account and missing project on this workstation.
 - `docker build -f services/api/Dockerfile -t venueops-api:local .`: passed.
 - `docker build -t venueops-web:local apps/web`: passed.
+- `python3 scripts/smoke_api_flow.py`: passed with API and web services running.
 - Web proxy smoke: passed through `/api/backend/*`, including health, dashboard snapshot, agent run, approvals, audit, and KPI checks.
 - `python3 scripts/build_demo_video.py`: passed; produced 00:03:00 MP4 with 1280x720 video and AAC audio.
 - Terminal smoke flow: passed health, reset, crowd surge, agent run, `gemini.plan` trace, >=5 tool calls, 5 pending approvals, approve/reject actions, audit log, KPI improvement, docs page.
-- Built-in browser flow: passed dashboard load, reset, crowd surge, agent run, visible planner status, `gemini.plan` tool trace, approve/reject actions, visible action audit trail, SOP evidence, before/after KPI, docs page, with zero console errors during the test window.
+- Built-in browser flow: passed dashboard load, direct route checks, reset, crowd surge, agent run, visible planner status, `gemini.plan` tool trace, approve/reject actions, visible action audit trail, SOP evidence, before/after KPI, docs page, with zero console errors during the test window.
 
 ```bash
 cd services/api

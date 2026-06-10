@@ -101,6 +101,20 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+Useful routes:
+
+- `/`
+- `/dashboard/event_wc_demo_001`
+- `/agent`
+- `/actions`
+- `/docs`
+
+With both services running, execute the reproducible terminal smoke:
+
+```bash
+python3 scripts/smoke_api_flow.py
+```
+
 ## Environment
 
 Copy `.env.example` into `services/api/.env` and configure real integrations when available. Without secrets, the demo uses the bundled deterministic seed data.
