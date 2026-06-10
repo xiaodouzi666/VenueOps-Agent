@@ -8,7 +8,7 @@ It uses Gemini on Google Cloud Agent Platform as the intended planning layer, Mo
 
 ## Live Demo
 
-Cloud Run URL: pending deployment.
+Cloud Run URL: [https://venueops-web-iub7vvtltq-uc.a.run.app](https://venueops-web-iub7vvtltq-uc.a.run.app)
 
 Deployment preflight:
 
@@ -17,7 +17,7 @@ gcloud auth login
 export GOOGLE_CLOUD_PROJECT=your-project-id
 export GOOGLE_CLOUD_REGION=us-central1
 export GOOGLE_CLOUD_LOCATION=us-central1
-export GEMINI_MODEL=gemini-3-pro
+export GEMINI_MODEL=gemini-2.5-flash
 gcloud config set project "$GOOGLE_CLOUD_PROJECT"
 
 infra/scripts/enable_gcp_services.sh
@@ -31,6 +31,8 @@ infra/scripts/deploy.sh
 ```
 
 `deploy.sh` also grants the API Cloud Run service account access to Vertex AI and the MongoDB Secret Manager secrets. Set `CLOUD_RUN_SERVICE_ACCOUNT` before running it if you do not want to use the project compute default service account.
+
+The deployed demo uses `gemini-2.5-flash`, which is verified in the hackathon project and `us-central1` Vertex AI location.
 
 ## Demo Video
 
@@ -126,7 +128,7 @@ MDB_MCP_CONNECTION_STRING=mongodb+srv://...
 GOOGLE_CLOUD_PROJECT=your-project-id
 GOOGLE_CLOUD_LOCATION=us-central1
 GOOGLE_GENAI_USE_VERTEXAI=true
-GEMINI_MODEL=gemini-3-pro
+GEMINI_MODEL=gemini-2.5-flash
 BACKEND_API_BASE_URL=http://localhost:8080
 ```
 

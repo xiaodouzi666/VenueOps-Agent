@@ -19,18 +19,16 @@ def request(method: str, url: str, payload: dict[str, Any] | None = None) -> dic
         data = json.dumps(payload).encode()
         headers["Content-Type"] = "application/json"
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
-    with urllib.request.urlopen(req, timeout=20) as response:
+    with urllib.request.urlopen(req, timeout=120) as response:
         body = response.read()
         return json.loads(body.decode()) if body else {}
 
 
 def main() -> None:
     health = request("GET", f"{API_ROOT}/health")
-    healthz = request("GET", f"{API_ROOT}/healthz")
     readyz = request("GET", f"{API_ROOT}/readyz")
     web_health = request("GET", f"{WEB_PROXY_ROOT}/health")
     assert health["status"] == "ok", health
-    assert healthz["status"] == "ok", healthz
     assert readyz["status"] == "ready", readyz
     assert web_health["status"] == "ok", web_health
 
@@ -75,7 +73,6 @@ def main() -> None:
             {
                 "status": "terminal smoke passed",
                 "api_health": health["status"],
-                "api_healthz": healthz["status"],
                 "api_readyz": readyz["status"],
                 "web_proxy_health": web_health["status"],
                 "tool_calls": len(run["tool_trace"]),

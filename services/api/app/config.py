@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     google_cloud_project: str | None = Field(default=None, alias="GOOGLE_CLOUD_PROJECT")
     google_cloud_location: str = Field(default="us-central1", alias="GOOGLE_CLOUD_LOCATION")
     google_genai_use_vertexai: bool = Field(default=True, alias="GOOGLE_GENAI_USE_VERTEXAI")
-    gemini_model: str = Field(default="gemini-3-pro", alias="GEMINI_MODEL")
+    gemini_model: str = Field(default="gemini-2.5-flash", alias="GEMINI_MODEL")
 
     cors_origins_raw: str = Field(
         default="http://localhost:3000,http://127.0.0.1:3000",

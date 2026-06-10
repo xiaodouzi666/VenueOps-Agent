@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import copy
 import json
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
 from app.config import settings
 
+logger = logging.getLogger(__name__)
 ROOT_DIR = Path(__file__).resolve().parents[4]
 SEED_DIR = ROOT_DIR / "data" / "seed"
 
@@ -176,7 +178,7 @@ class MongoRepository(BaseRepository):
         from pymongo import MongoClient
 
         self.database_name = database_name
-        self.client = MongoClient(uri, serverSelectionTimeoutMS=2500)
+        self.client = MongoClient(uri, serverSelectionTimeoutMS=8000)
         self.db = self.client[database_name]
         self.client.admin.command("ping")
 
@@ -220,25 +222,37 @@ class MongoRepository(BaseRepository):
 
 
 _repository: BaseRepository | None = None
+_repository_error: str | None = None
 
 
 def get_repository(force_memory: bool = False) -> BaseRepository:
-    global _repository
+    global _repository, _repository_error
     if force_memory:
         _repository = InMemoryRepository()
+        _repository_error = None
         return _repository
     if _repository is not None:
         return _repository
     if settings.mongodb_uri:
         try:
             _repository = MongoRepository(settings.mongodb_uri, settings.mongodb_db)
+            _repository_error = None
             return _repository
-        except Exception:
+        except Exception as exc:
             # The hackathon demo should still run locally without secrets or Atlas access.
-            _repository = InMemoryRepository()
-            return _repository
+            _repository_error = type(exc).__name__
+            logger.warning("MongoDB Atlas connection failed; using fallback repository: %s", _repository_error)
+            fallback = InMemoryRepository()
+            if settings.demo_mode:
+                _repository = fallback
+            return fallback
     _repository = InMemoryRepository()
+    _repository_error = None
     return _repository
+
+
+def get_repository_error() -> str | None:
+    return _repository_error
 
 
 def reset_repository_to_seed() -> BaseRepository:
