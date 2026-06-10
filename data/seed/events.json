@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "event_wc_demo_001",
+    "venue_id": "venue_001",
+    "name": "World Cup Demo Match",
+    "event_type": "football_match",
+    "start_time": "2026-06-11T18:00:00Z",
+    "expected_attendance": 64000,
+    "risk_profile": {
+      "crowd": "high",
+      "retail_demand": "high",
+      "weather": "rain_possible"
+    },
+    "status": "pre_event"
+  }
+]

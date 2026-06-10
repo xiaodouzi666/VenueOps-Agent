@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "incident_301",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "restroom_2f_west",
+    "type": "facility",
+    "severity": "medium",
+    "description": "Restroom 2F West has long queue and one broken sink.",
+    "status": "open",
+    "reported_at": "2026-06-11T16:40:00Z"
+  },
+  {
+    "_id": "incident_302",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "gate_b",
+    "type": "crowd",
+    "severity": "high",
+    "description": "Gate B overflow lane not yet opened while queue exceeds pre-event SLA.",
+    "status": "open",
+    "reported_at": "2026-06-11T16:43:00Z"
+  },
+  {
+    "_id": "incident_303",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "main_concourse",
+    "type": "facility",
+    "severity": "low",
+    "description": "Escalator E2 running slower than normal; monitor only.",
+    "status": "monitoring",
+    "reported_at": "2026-06-11T16:20:00Z"
+  }
+]

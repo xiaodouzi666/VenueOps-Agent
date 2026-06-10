@@ -1,0 +1,112 @@
+[
+  {
+    "_id": "tel_gate_a_1640",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "gate_a",
+    "timestamp": "2026-06-11T16:40:00Z",
+    "people_count": 1480,
+    "queue_length": 180,
+    "avg_wait_min": 8,
+    "dwell_time_min": 5,
+    "sensor_confidence": 0.93
+  },
+  {
+    "_id": "tel_gate_a_1645",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "gate_a",
+    "timestamp": "2026-06-11T16:45:00Z",
+    "people_count": 1620,
+    "queue_length": 205,
+    "avg_wait_min": 9,
+    "dwell_time_min": 5,
+    "sensor_confidence": 0.94
+  },
+  {
+    "_id": "tel_gate_b_1640",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "gate_b",
+    "timestamp": "2026-06-11T16:40:00Z",
+    "people_count": 1960,
+    "queue_length": 380,
+    "avg_wait_min": 16,
+    "dwell_time_min": 8,
+    "sensor_confidence": 0.91
+  },
+  {
+    "_id": "tel_gate_b_1645",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "gate_b",
+    "timestamp": "2026-06-11T16:45:00Z",
+    "people_count": 2050,
+    "queue_length": 420,
+    "avg_wait_min": 18,
+    "dwell_time_min": 9,
+    "sensor_confidence": 0.91
+  },
+  {
+    "_id": "tel_gate_d_1645",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "gate_d",
+    "timestamp": "2026-06-11T16:45:00Z",
+    "people_count": 1210,
+    "queue_length": 110,
+    "avg_wait_min": 5,
+    "dwell_time_min": 4,
+    "sensor_confidence": 0.89
+  },
+  {
+    "_id": "tel_main_concourse_1645",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "main_concourse",
+    "timestamp": "2026-06-11T16:45:00Z",
+    "people_count": 3660,
+    "queue_length": 260,
+    "avg_wait_min": 7,
+    "dwell_time_min": 12,
+    "sensor_confidence": 0.9
+  },
+  {
+    "_id": "tel_food_1645",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "food_court_1",
+    "timestamp": "2026-06-11T16:45:00Z",
+    "people_count": 1510,
+    "queue_length": 295,
+    "avg_wait_min": 14,
+    "dwell_time_min": 16,
+    "sensor_confidence": 0.88
+  },
+  {
+    "_id": "tel_retail_1645",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "retail_wing_east",
+    "timestamp": "2026-06-11T16:45:00Z",
+    "people_count": 980,
+    "queue_length": 60,
+    "avg_wait_min": 3,
+    "dwell_time_min": 11,
+    "sensor_confidence": 0.86
+  },
+  {
+    "_id": "tel_restroom_1645",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "restroom_2f_west",
+    "timestamp": "2026-06-11T16:45:00Z",
+    "people_count": 355,
+    "queue_length": 88,
+    "avg_wait_min": 12,
+    "dwell_time_min": 10,
+    "sensor_confidence": 0.82
+  },
+  {
+    "_id": "tel_service_1645",
+    "event_id": "event_wc_demo_001",
+    "zone_id": "service_corridor",
+    "timestamp": "2026-06-11T16:45:00Z",
+    "people_count": 145,
+    "queue_length": 5,
+    "avg_wait_min": 1,
+    "dwell_time_min": 3,
+    "sensor_confidence": 0.84
+  }
+]

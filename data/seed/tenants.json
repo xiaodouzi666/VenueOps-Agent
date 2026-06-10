@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "tenant_014",
+    "venue_id": "venue_001",
+    "name": "FanFuel Drinks",
+    "category": "food_beverage",
+    "zone_id": "food_court_1",
+    "opening_hours": "10:00-23:00",
+    "event_priority": "high",
+    "contract_notes": "Eligible for event-day push notifications after approval."
+  },
+  {
+    "_id": "tenant_021",
+    "venue_id": "venue_001",
+    "name": "NorthBridge Grill",
+    "category": "food_beverage",
+    "zone_id": "food_court_1",
+    "opening_hours": "10:00-23:00",
+    "event_priority": "high",
+    "contract_notes": "Restock requests must be approved by venue operations."
+  },
+  {
+    "_id": "tenant_032",
+    "venue_id": "venue_001",
+    "name": "FanGear East",
+    "category": "retail",
+    "zone_id": "retail_wing_east",
+    "opening_hours": "09:00-23:00",
+    "event_priority": "medium",
+    "contract_notes": "Can run crowd-balancing campaign drafts after approval."
+  }
+]

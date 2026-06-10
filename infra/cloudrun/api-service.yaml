@@ -1,0 +1,20 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: venueops-api
+spec:
+  template:
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/PROJECT_ID/venueops/venueops-api:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGODB_DB
+              value: venueops_demo
+            - name: VENUEOPS_ALLOWED_DB
+              value: venueops_demo
+            - name: VENUEOPS_USE_REAL_MCP
+              value: "true"
+            - name: GOOGLE_GENAI_USE_VERTEXAI
+              value: "true"

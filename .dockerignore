@@ -1,0 +1,10 @@
+.git
+node_modules
+apps/web/node_modules
+apps/web/.next
+services/api/.venv
+services/api/.pytest_cache
+__pycache__
+*.pyc
+.env
+.DS_Store

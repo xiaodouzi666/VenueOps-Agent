@@ -1,0 +1,57 @@
+[
+  {
+    "_id": "inv_014_water",
+    "tenant_id": "tenant_014",
+    "event_id": "event_wc_demo_001",
+    "sku": "water_500ml",
+    "name": "Water 500ml",
+    "current_stock": 180,
+    "reorder_threshold": 250,
+    "projected_next_90min": 420,
+    "last_updated": "2026-06-11T16:45:00Z"
+  },
+  {
+    "_id": "inv_014_soda",
+    "tenant_id": "tenant_014",
+    "event_id": "event_wc_demo_001",
+    "sku": "soda_zero",
+    "name": "Soda Zero",
+    "current_stock": 260,
+    "reorder_threshold": 220,
+    "projected_next_90min": 310,
+    "last_updated": "2026-06-11T16:45:00Z"
+  },
+  {
+    "_id": "inv_021_hotdog",
+    "tenant_id": "tenant_021",
+    "event_id": "event_wc_demo_001",
+    "sku": "hotdog_classic",
+    "name": "Classic Hot Dog",
+    "current_stock": 210,
+    "reorder_threshold": 180,
+    "projected_next_90min": 390,
+    "last_updated": "2026-06-11T16:45:00Z"
+  },
+  {
+    "_id": "inv_021_rain_poncho",
+    "tenant_id": "tenant_021",
+    "event_id": "event_wc_demo_001",
+    "sku": "rain_poncho",
+    "name": "Rain Poncho",
+    "current_stock": 90,
+    "reorder_threshold": 140,
+    "projected_next_90min": 220,
+    "last_updated": "2026-06-11T16:45:00Z"
+  },
+  {
+    "_id": "inv_032_scarf",
+    "tenant_id": "tenant_032",
+    "event_id": "event_wc_demo_001",
+    "sku": "team_scarf",
+    "name": "Team Scarf",
+    "current_stock": 560,
+    "reorder_threshold": 250,
+    "projected_next_90min": 180,
+    "last_updated": "2026-06-11T16:45:00Z"
+  }
+]

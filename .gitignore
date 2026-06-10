@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.venv/
+node_modules/
+.next/
+dist/
+build/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.egg-info/
+coverage/
