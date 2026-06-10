@@ -10,6 +10,13 @@ It uses Gemini on Google Cloud Agent Platform as the intended reasoning layer, M
 
 Cloud Run URL: pending deployment.
 
+Deployment preflight:
+
+```bash
+infra/scripts/preflight.sh
+infra/scripts/deploy.sh
+```
+
 ## Demo Video
 
 3-minute demo video: [docs/demo_assets/venueops_demo.mp4](docs/demo_assets/venueops_demo.mp4)
