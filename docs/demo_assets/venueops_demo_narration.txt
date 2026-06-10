@@ -1,0 +1,27 @@
+VenueOps Agent is an operations copilot for large retail and event venues.
+During a peak event, operators are watching crowd density, queues, inventory, incidents, and staffing at the same time.
+The goal is not another chat dashboard. The goal is an agent that can inspect live operational data, retrieve the right procedures, and create safe actions that a human can approve.
+
+The demo starts in the command center for NorthBridge Stadium and Retail Plaza.
+MongoDB holds the venue, event, telemetry, tenants, inventory, staff shifts, incidents, actions, audit events, SOP documents, and agent run memory.
+The heatmap makes the first problem visible immediately: Gate B is under critical pressure, with an eighteen minute wait and a large staffing gap.
+
+Next, the demo reset and crowd surge controls reproduce the scenario.
+The API writes the surge into operational telemetry, and the dashboard updates the risk model.
+This is deterministic for judging, but the same repository can switch to MongoDB Atlas, MongoDB MCP Server, and Vertex AI Gemini when the required secrets are configured.
+
+When the mission runs, the agent follows an observe, analyze, retrieve, plan, confirm loop.
+It inspects MongoDB collection schema, aggregates telemetry, finds inventory and staff data, counts incidents, retrieves SOP guidance, and creates five pending actions.
+The tool trace is exposed in the product so the operator can see exactly which MongoDB-shaped calls and controlled business tools were used.
+
+The action plan is operational, not just descriptive.
+It proposes moving four trained stewards from Retail Wing East to Gate B, drafting a signage redirect to Gate D, restocking Water 500ml, assigning a facility team to Restroom 2F West, and drafting a tenant campaign to pull optional traffic toward Retail Wing East.
+Every meaningful action is created as pending approval.
+
+The operator approves the staff dispatch and water restock, and rejects the signage instruction.
+The application writes execution effects and audit events back to MongoDB.
+Gate B staffing improves, water stock recovers, the before and after KPI shows pressure and wait time dropping, and each action card shows the audit trail.
+
+The architecture page summarizes the build.
+Cloud Run deployment assets are included, Gemini integration is implemented behind configuration, MongoDB Atlas is the production data store, MongoDB Search and Vector Search-ready SOP retrieval is included, and MongoDB MCP access is represented in the trace with a real MCP stdio path plus deterministic local fallback.
+VenueOps Agent is a controlled operations loop: observe with MongoDB, reason with Gemini, retrieve procedures, propose actions, require human approval, execute safely, and preserve audit memory.

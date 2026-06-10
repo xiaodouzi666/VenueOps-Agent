@@ -18,8 +18,8 @@ This file tracks the concrete evidence for the requested P0 and P1 scope. It sep
 | Reproducible demo reset and crowd surge | Complete | `services/api/app/tools/simulation_tools.py`, `services/api/app/routes/demo.py`, `apps/web/src/components/ScenarioControls.tsx` |
 | Public open-source repo | Complete | Source pushed to `https://github.com/xiaodouzi666/VenueOps-Agent.git` on `main` |
 | License | Complete | `LICENSE` |
-| README | Complete except external hosted/video URLs | `README.md` |
-| 3-minute English demo video | Requires recording and upload | `docs/demo_script.md` provides the script |
+| README | Complete except external hosted Cloud Run URL | `README.md` |
+| 3-minute English demo video | Complete | `docs/demo_assets/venueops_demo.mp4`, generated from real app screenshots and English narration via `scripts/build_demo_video.py` |
 
 ## P1
 
@@ -39,6 +39,7 @@ Final local verification on 2026-06-10:
 - `npm --workspace apps/web run build`: passed.
 - `docker build -f services/api/Dockerfile -t venueops-api:local .`: passed.
 - `docker build -t venueops-web:local apps/web`: passed.
+- `python3 scripts/build_demo_video.py`: passed; produced 00:03:00 MP4 with 1280x720 video and AAC audio.
 - Terminal smoke flow: passed health, reset, crowd surge, agent run, >=5 tool calls, 5 pending approvals, approve/reject actions, audit log, KPI improvement, docs page.
 - Built-in browser flow: passed dashboard load, reset, crowd surge, agent run, approve/reject actions, visible action audit trail, tool trace, SOP evidence, before/after KPI, docs page, with zero console errors during the test window.
 
@@ -60,5 +61,4 @@ These items cannot be proven complete from this workstation unless the required 
 
 1. Install and authenticate `gcloud`, then run `infra/scripts/enable_gcp_services.sh` and `infra/scripts/deploy.sh`.
 2. Configure MongoDB Atlas URI and Secret Manager secrets for `MONGODB_URI` and `MDB_MCP_CONNECTION_STRING`.
-3. Record and upload the demo video using `docs/demo_script.md`.
-4. Replace the README hosted URL and video URL once they exist.
+3. Replace the README hosted Cloud Run URL once it exists.

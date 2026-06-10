@@ -12,7 +12,10 @@ Cloud Run URL: pending deployment.
 
 ## Demo Video
 
-3-minute demo video URL: pending recording.
+3-minute demo video: [docs/demo_assets/venueops_demo.mp4](docs/demo_assets/venueops_demo.mp4)
+
+Public GitHub video URL:
+`https://github.com/xiaodouzi666/VenueOps-Agent/blob/main/docs/demo_assets/venueops_demo.mp4`
 
 ## Built With
 
