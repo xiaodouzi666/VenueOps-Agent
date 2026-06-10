@@ -19,8 +19,11 @@ def test_agent_run_creates_mcp_trace_and_pending_actions():
     assert "mongodb.find" in tools
     assert "mongodb.count" in tools
     assert "mongodb.collection-schema" in tools
+    assert "gemini.plan" in tools
     assert "create_pending_action" in tools
     assert result["evidence"]
+    assert result["planner"]["mode"] == "deterministic_fallback"
+    assert result["planner"]["ranked_actions"]
 
 
 def test_approving_staff_dispatch_executes_and_audits():

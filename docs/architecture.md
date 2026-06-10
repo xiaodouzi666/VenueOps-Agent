@@ -17,6 +17,7 @@ Operator
      -> MongoDB MCP-shaped reads
      -> deterministic risk tools
      -> SOP Search / Vector Search retriever
+     -> Gemini planner on Vertex AI, with deterministic fallback
      -> pending action writer
   -> actions / agent_runs / audit trail
   -> dashboard verification
@@ -26,7 +27,7 @@ Operator
 
 - Google Cloud Run hosts API and web services.
 - Google Secret Manager provides MongoDB and MCP connection strings.
-- Gemini on Vertex AI can generate the final judge-facing explanation.
+- Gemini on Vertex AI can draft the structured operations strategy and final judge-facing explanation.
 - MongoDB Atlas stores operational collections and agent memory.
 - MongoDB MCP Server provides the database tool surface for agentic reads.
 

@@ -5,6 +5,7 @@ from typing import Any
 
 from app.agents.prompts import ROOT_AGENT_SYSTEM_PROMPT
 from app.agents.subagents.ops_analyst import analyze_ops
+from app.agents.subagents.planner import plan_with_gemini
 from app.agents.subagents.retail_analyst import analyze_retail
 from app.agents.subagents.safety_agent import analyze_safety
 from app.config import settings
@@ -44,6 +45,22 @@ def run_venueops_agent(repo: BaseRepository, mission: str, event_id: str = "even
         f"{mission} gate overflow food court restock facility incident tenant campaign signage",
         top_k=4,
     )
+    planner = plan_with_gemini(mission=mission, ops=ops, retail=retail, safety=safety, sops=sops)
+    trace.add(
+        tool="gemini.plan",
+        collection="agent_planner",
+        purpose="Generate structured operations strategy from observed MongoDB metrics and SOP evidence",
+        status=planner["status"],
+        duration_ms=planner["duration_ms"],
+        input_summary={"mission": mission, "sop_count": len(sops)},
+        output_summary={
+            "mode": planner["mode"],
+            "ranked_actions": len(planner.get("ranked_actions", [])),
+            **({"reason": planner["reason"]} if planner.get("reason") else {}),
+        },
+        evidence_ids=[doc["_id"] for doc in sops if doc.get("_id")],
+        transport=planner["mode"],
+    )
     actions = _create_recommended_actions(repo, event_id, ops, retail, safety, sops)
     for action in actions:
         trace.add(
@@ -67,6 +84,7 @@ def run_venueops_agent(repo: BaseRepository, mission: str, event_id: str = "even
         "steps": trace.steps,
         "plan_summary": summary["situation_summary"],
         "recommended_action_ids": [action["_id"] for action in actions],
+        "planner": planner,
         "gemini_note": gemini_note,
         "created_at": utc_now_iso(),
     }
@@ -80,9 +98,10 @@ def run_venueops_agent(repo: BaseRepository, mission: str, event_id: str = "even
         "required_confirmations": len([action for action in actions if action.get("status") == "pending_approval"]),
         "evidence": sops,
         "tool_trace": trace.steps,
+        "planner": planner,
         "snapshot": snapshot,
         "gemini_note": gemini_note,
-        "agent_mode": "gemini_vertex_ready_deterministic_demo",
+        "agent_mode": planner["mode"],
     }
 
 

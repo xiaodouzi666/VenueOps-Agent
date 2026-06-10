@@ -123,6 +123,22 @@ export type AgentRun = {
   required_confirmations: number;
   evidence: EvidenceDoc[];
   tool_trace: ToolTraceStep[];
+  planner?: {
+    status: string;
+    mode: string;
+    model?: string;
+    summary: string;
+    ranked_actions: Array<{
+      type: string;
+      title: string;
+      rationale: string;
+      risk_level: string;
+      evidence_doc_ids: string[];
+    }>;
+    constraints: string[];
+    verification_focus: string[];
+    reason?: string;
+  };
   agent_run_id: string;
   gemini_note?: string | null;
 };

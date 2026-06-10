@@ -4,7 +4,7 @@
 
 - FastAPI backend and Next.js web app.
 - Google Cloud Run deployment assets.
-- Gemini / Vertex AI-ready explanation hook.
+- Gemini / Vertex AI-ready planner and explanation hooks.
 - MongoDB Atlas-compatible repository layer.
 - MongoDB MCP-shaped tool trace for `find`, `aggregate`, `count`, and schema.
 - MongoDB Aggregation-style risk analysis.

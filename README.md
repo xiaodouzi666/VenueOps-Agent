@@ -4,7 +4,7 @@ AI operations copilot for retail and event venues, built for the Google Cloud Ra
 
 VenueOps Agent helps stadiums, malls, fan zones, airports, and event venues handle peak-time operations: crowd congestion, queue overflow, stockouts, staff dispatch, facility incidents, and tenant campaigns.
 
-It uses Gemini on Google Cloud Agent Platform as the intended reasoning layer, MongoDB Atlas as operational memory, MongoDB Aggregation for risk analytics, MongoDB Search / Vector Search for SOP retrieval, and the MongoDB MCP Server as the agentic data access layer. The local demo runs deterministically without secrets, then switches to real MongoDB / Vertex AI when environment variables are configured.
+It uses Gemini on Google Cloud Agent Platform as the intended planning layer, MongoDB Atlas as operational memory, MongoDB Aggregation for risk analytics, MongoDB Search / Vector Search for SOP retrieval, and the MongoDB MCP Server as the agentic data access layer. The local demo runs deterministically without secrets, then switches to real MongoDB / Vertex AI when environment variables are configured.
 
 ## Live Demo
 
@@ -65,10 +65,11 @@ The agent performs an observe-analyze-retrieve-plan-confirm-act-verify loop:
 1. Reads current event data through MongoDB MCP-style tools.
 2. Aggregates crowd, inventory, staffing, and incident risk.
 3. Retrieves relevant SOPs from searchable SOP documents.
-4. Creates a multi-step safe action plan.
-5. Stores actions as `pending_approval`.
-6. Lets an operator approve or reject each action.
-7. Writes status, execution effects, and audit trail back to MongoDB.
+4. Uses Gemini on Vertex AI as the planner when Google Cloud configuration is present, with deterministic fallback for local judging.
+5. Creates a multi-step safe action plan.
+6. Stores actions as `pending_approval`.
+7. Lets an operator approve or reject each action.
+8. Writes status, execution effects, and audit trail back to MongoDB.
 
 ## How MongoDB Is Used
 
@@ -128,7 +129,7 @@ The web app calls a same-origin Next.js proxy at `/api/backend/*`; Cloud Run set
 
 ## Judging Alignment
 
-- Technological implementation: Gemini/Google Cloud-ready orchestration, MongoDB MCP trace, MongoDB Aggregation, Search/Vector Search-ready SOP retrieval, Cloud Run deployment assets.
+- Technological implementation: Gemini/Google Cloud-ready planner orchestration, MongoDB MCP trace, MongoDB Aggregation, Search/Vector Search-ready SOP retrieval, Cloud Run deployment assets.
 - Design: command-center UI with heatmap, KPIs, action queue, tool trace, and evidence.
 - Potential impact: applies to World Cup fan zones, stadiums, malls, airports, and event venues.
 - Quality of idea: agentic operations workflow, not a chat-only dashboard.

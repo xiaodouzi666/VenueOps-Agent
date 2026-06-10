@@ -144,6 +144,12 @@ export function DashboardClient() {
                 <div className="summary">
                   <strong>{agentRun.required_confirmations} confirmations required</strong>
                   {agentRun.situation_summary}
+                  {agentRun.planner && (
+                    <p className="miniText muted">
+                      Planner: {agentRun.planner.status} via {agentRun.planner.mode}
+                      {agentRun.planner.model ? ` · ${agentRun.planner.model}` : ""}
+                    </p>
+                  )}
                   {agentRun.gemini_note && <p className="miniText muted">{agentRun.gemini_note}</p>}
                 </div>
               )}
