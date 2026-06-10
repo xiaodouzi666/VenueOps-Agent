@@ -9,7 +9,7 @@ This file tracks the concrete evidence for the requested P0 and P1 scope. It sep
 | Requirement | Current status | Evidence |
 | --- | --- | --- |
 | Web app accessible with dashboard and agent chat | Locally complete; deployment scripts present | `apps/web/src/components/DashboardClient.tsx`, `apps/web/src/components/VenueMap.tsx`, `apps/web/src/components/ActionQueue.tsx`, local `http://localhost:3000`, `infra/scripts/deploy.sh` |
-| Cloud Run hosted app | Deployment assets complete; actual hosted URL requires gcloud auth, project, and secrets | `services/api/Dockerfile`, `apps/web/Dockerfile`, `infra/cloudbuild-api.yaml`, `infra/scripts/preflight.sh`, `infra/scripts/deploy.sh`; `gcloud` is installed but no active account/project is configured on this machine |
+| Cloud Run hosted app | Deployment assets complete; actual hosted URL requires gcloud auth, project, and secrets | `services/api/Dockerfile`, `apps/web/Dockerfile`, `infra/cloudbuild-api.yaml`, `infra/scripts/setup_secrets.sh`, `infra/scripts/preflight.sh`, `infra/scripts/deploy.sh`; `gcloud` is installed but no active account/project is configured on this machine |
 | Gemini / Google Agent Platform participates in core reasoning | Vertex/Gemini hook implemented; deterministic demo fallback runs without secrets | `services/api/app/agents/root_agent.py` `_optional_gemini_explanation`, `.env.example`, `README.md` |
 | MongoDB MCP integration | Implemented as MCP stdio path plus deterministic trace fallback | `services/api/app/tools/mongodb_mcp.py`, `docs/mongodb_mcp_setup.md`; traces include `mongodb.find`, `mongodb.aggregate`, `mongodb.count`, `mongodb.collection-schema` |
 | MongoDB Atlas stores business data | Atlas-ready repository implemented; local seed fallback included | `services/api/app/db/mongo.py`, `data/seed/*.json`, `services/api/app/db/indexes.py` |
@@ -60,7 +60,8 @@ docker build -t venueops-web:local apps/web
 These items cannot be proven complete from this workstation unless the required credentials are present:
 
 1. Authenticate `gcloud` and set a project: `gcloud auth login` and `gcloud config set project <project-id>`.
-2. Run `infra/scripts/preflight.sh` to verify account, project, APIs, and required secrets.
-3. Configure MongoDB Atlas URI and Secret Manager secrets for `MONGODB_URI` and `MDB_MCP_CONNECTION_STRING`.
-4. Run `infra/scripts/enable_gcp_services.sh` and `infra/scripts/deploy.sh`.
-5. Replace the README hosted Cloud Run URL once it exists.
+2. Run `infra/scripts/enable_gcp_services.sh`.
+3. Export `MONGODB_URI` and `MDB_MCP_CONNECTION_STRING`, then run `infra/scripts/setup_secrets.sh`.
+4. Run `infra/scripts/preflight.sh` to verify account, project, APIs, and required secrets.
+5. Run `infra/scripts/deploy.sh`.
+6. Replace the README hosted Cloud Run URL once it exists.

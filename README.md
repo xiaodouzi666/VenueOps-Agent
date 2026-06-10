@@ -13,6 +13,16 @@ Cloud Run URL: pending deployment.
 Deployment preflight:
 
 ```bash
+gcloud auth login
+export GOOGLE_CLOUD_PROJECT=your-project-id
+gcloud config set project "$GOOGLE_CLOUD_PROJECT"
+
+infra/scripts/enable_gcp_services.sh
+
+export MONGODB_URI="mongodb+srv://..."
+export MDB_MCP_CONNECTION_STRING="mongodb+srv://..."
+infra/scripts/setup_secrets.sh
+
 infra/scripts/preflight.sh
 infra/scripts/deploy.sh
 ```
