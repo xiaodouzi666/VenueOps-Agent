@@ -1,4 +1,5 @@
 from app.db.mongo import get_repository
+from app.tools.simulation_tools import simulate_event_tick
 from app.tools.risk_tools import compute_inventory_risk, compute_zone_risk, get_current_event_snapshot
 
 
@@ -29,3 +30,14 @@ def test_snapshot_contains_p1_dashboard_surfaces():
     assert snapshot["zone_risks"]
     assert snapshot["inventory_risks"]
     assert snapshot["incident_priorities"]
+
+
+def test_crowd_surge_scenario_uses_latest_event_timestamp():
+    repo = get_repository(force_memory=True)
+
+    simulate_event_tick(repo, "event_wc_demo_001", "crowd_surge_gate_b")
+    risks = compute_zone_risk(repo, "event_wc_demo_001")
+
+    gate_b = next(risk for risk in risks if risk["zone_id"] == "gate_b")
+    assert gate_b["avg_wait_min"] == 22
+    assert gate_b["queue_length"] == 510

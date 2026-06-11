@@ -6,6 +6,8 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends curl ca-certificates nodejs npm \
   && rm -rf /var/lib/apt/lists/*
 
+RUN npm install -g mongodb-mcp-server@1.12.0
+
 COPY services/api ./services/api
 COPY data ./data
 

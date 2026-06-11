@@ -23,5 +23,5 @@ The application writes execution effects and audit events back to MongoDB.
 Gate B staffing improves, water stock recovers, the before and after KPI shows pressure and wait time dropping, and each action card shows the audit trail.
 
 The architecture page summarizes the build.
-Cloud Run deployment assets are included, Gemini integration is implemented behind configuration, MongoDB Atlas is the production data store, MongoDB Search and Vector Search-ready SOP retrieval is included, and MongoDB MCP access is represented in the trace with a real MCP stdio path plus deterministic local fallback.
+Cloud Run deployment assets are included, Gemini integration is implemented behind configuration, MongoDB Atlas is the production data store, Atlas Vector Search-first SOP retrieval is included, and MongoDB MCP Server access is represented in the trace with visible transport plus deterministic local fallback.
 VenueOps Agent is a controlled operations loop: observe with MongoDB, reason with Gemini, retrieve procedures, propose actions, require human approval, execute safely, and preserve audit memory.

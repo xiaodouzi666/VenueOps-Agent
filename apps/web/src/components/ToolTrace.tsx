@@ -13,6 +13,7 @@ export function ToolTrace({ steps }: { steps: ToolTraceStep[] }) {
             <div>
               <strong className="miniText">{step.collection}</strong>
               <div className="miniText muted">{step.purpose}</div>
+              <div className="traceTransport miniText">transport: {step.transport}</div>
             </div>
             <span className="pill">{step.status} · {step.duration_ms}ms</span>
           </div>

@@ -11,5 +11,11 @@ __pycache__/
 *.egg-info/
 coverage/
 docs/demo_assets/generated_slides/
+docs/demo_assets/devpost_screenshots/
 docs/demo_assets/*.aiff
 docs/demo_assets/*_concat.txt
+*.log
+*.zip
+*.tar
+*.tar.gz
+*.tgz

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from app.db.mongo import BaseRepository, reset_repository_to_seed, utc_now_iso
@@ -10,15 +11,32 @@ def reset_demo_data() -> dict[str, Any]:
     return {"status": "reset", "backend": repo.backend_name, "database": repo.database_name}
 
 
+def _parse_iso_timestamp(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def _next_event_timestamp(repo: BaseRepository, event_id: str) -> str:
+    rows = repo.find("telemetry", {"event_id": event_id})
+    latest = max((_parse_iso_timestamp(row["timestamp"]) for row in rows if row.get("timestamp")), default=None)
+    if latest is None:
+        latest = datetime.now(timezone.utc).replace(microsecond=0)
+    return (latest + timedelta(minutes=1)).isoformat().replace("+00:00", "Z")
+
+
+def _timestamp_id(value: str) -> str:
+    return value.replace(":", "").replace("-", "").replace("+", "").replace("Z", "Z")
+
+
 def simulate_event_tick(repo: BaseRepository, event_id: str, scenario: str) -> dict[str, Any]:
     if scenario == "crowd_surge_gate_b":
+        timestamp = _next_event_timestamp(repo, event_id)
         repo.insert_one(
             "telemetry",
             {
-                "_id": f"tel_gate_b_surge_{utc_now_iso().replace(':', '').replace('-', '')}",
+                "_id": f"tel_gate_b_surge_{_timestamp_id(timestamp)}",
                 "event_id": event_id,
                 "zone_id": "gate_b",
-                "timestamp": utc_now_iso(),
+                "timestamp": timestamp,
                 "people_count": 2165,
                 "queue_length": 510,
                 "avg_wait_min": 22,
@@ -58,13 +76,14 @@ def simulate_event_tick(repo: BaseRepository, event_id: str, scenario: str) -> d
         )
         return {"status": "ok", "scenario": scenario, "changed": ["incidents.food_court_1"]}
     if scenario == "after_actions":
+        timestamp = _next_event_timestamp(repo, event_id)
         repo.insert_one(
             "telemetry",
             {
-                "_id": f"tel_gate_b_after_{utc_now_iso().replace(':', '').replace('-', '')}",
+                "_id": f"tel_gate_b_after_{_timestamp_id(timestamp)}",
                 "event_id": event_id,
                 "zone_id": "gate_b",
-                "timestamp": utc_now_iso(),
+                "timestamp": timestamp,
                 "people_count": 1735,
                 "queue_length": 230,
                 "avg_wait_min": 11,

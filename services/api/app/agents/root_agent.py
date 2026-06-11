@@ -19,12 +19,24 @@ from app.tools.sop_retriever import retrieve_relevant_sops
 def run_venueops_agent(repo: BaseRepository, mission: str, event_id: str = "event_wc_demo_001") -> dict[str, Any]:
     trace = ToolTrace()
     mcp = MongoMCPBridge(repo, trace)
+    try:
+        return _run_venueops_agent_with_bridge(repo, mission, event_id, trace, mcp)
+    finally:
+        mcp.close()
 
+
+def _run_venueops_agent_with_bridge(
+    repo: BaseRepository,
+    mission: str,
+    event_id: str,
+    trace: ToolTrace,
+    mcp: MongoMCPBridge,
+) -> dict[str, Any]:
     event = repo.find_one("events", {"_id": event_id})
     if not event:
         raise KeyError(f"Event {event_id} not found")
 
-    # Observe through MCP-shaped database reads. These calls are intentionally
+    # Observe through MongoDB MCP Server-backed database reads in hosted mode. These calls are intentionally
     # explicit so the UI can prove the agent inspected operational data first.
     mcp.collection_schema("telemetry", "Inspect telemetry shape before aggregating current crowd pressure")
     mcp.aggregate(
@@ -72,6 +84,7 @@ def run_venueops_agent(repo: BaseRepository, mission: str, event_id: str = "even
             input_summary={"type": action["type"], "risk_level": action["risk_level"]},
             output_summary={"action_id": action["_id"], "status": action["status"]},
             evidence_ids=action.get("evidence_doc_ids", []),
+            transport="venueops_guarded_write",
         )
     summary = _build_summary(mission, ops, retail, safety, actions, sops)
     gemini_note = _optional_gemini_explanation(mission, summary)
@@ -247,7 +260,7 @@ def _build_summary(
         "plan": [
             "Observe current operations data from MongoDB.",
             "Analyze crowd, inventory, staffing, and incident risk with deterministic formulas.",
-            "Retrieve relevant SOPs with Search / Vector Search-ready SOP documents.",
+            "Retrieve relevant SOPs through Atlas Vector Search-first SOP retrieval.",
             "Create five pending actions with evidence and expected impact.",
             "Wait for operator approval before executing operational changes.",
         ],

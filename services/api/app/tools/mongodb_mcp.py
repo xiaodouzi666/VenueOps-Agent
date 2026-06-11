@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import selectors
+import shutil
 import subprocess
 import time
 from dataclasses import dataclass, field
@@ -46,12 +47,12 @@ class ToolTrace:
 
 
 class MongoMCPBridge:
-    """MCP-shaped database tool surface.
+    """MongoDB MCP Server database tool surface with deterministic fallback.
 
-    The production path can swap this bridge for Google ADK's McpToolset wired to
-    `mongodb-mcp-server@latest`. The local demo keeps the same tool names and
+    Hosted runs launch the official MongoDB MCP Server and record its transport
+    in the visible tool trace. The local fallback keeps the same tool names and
     guardrails while executing against the repository abstraction, so every agent
-    run remains traceable without requiring secrets.
+    run remains reproducible without requiring secrets.
     """
 
     def __init__(self, repo: BaseRepository, trace: ToolTrace):
@@ -119,12 +120,18 @@ class MongoMCPBridge:
     def aggregate(self, collection: str, pipeline: list[dict[str, Any]], purpose: str) -> list[dict[str, Any]]:
         start = time.perf_counter()
         decision = guard_read(collection)
+        repo_error: str | None = None
         if not decision.allowed:
             rows: list[dict[str, Any]] = []
             status = "blocked"
         else:
-            rows = self.repo.aggregate(collection, pipeline)
-            status = "ok"
+            try:
+                rows = self.repo.aggregate(collection, pipeline)
+                status = "ok"
+            except Exception as exc:
+                rows = []
+                status = "fallback"
+                repo_error = f"{type(exc).__name__}: {exc}"
         transport, mcp_error = self._try_real_tool_call(
             "aggregate",
             {"database": settings.mongodb_db, "collection": collection, "pipeline": pipeline},
@@ -138,7 +145,11 @@ class MongoMCPBridge:
             status=status,
             duration_ms=int((time.perf_counter() - start) * 1000),
             input_summary={"pipeline": pipeline[:4]},
-            output_summary={"row_count": len(rows), **({"mcp_error": mcp_error} if mcp_error else {})},
+            output_summary={
+                "row_count": len(rows),
+                **({"repo_error": repo_error} if repo_error else {}),
+                **({"mcp_error": mcp_error} if mcp_error else {}),
+            },
             evidence_ids=[str(row.get("_id")) for row in rows[:8]],
             transport=transport,
         )
@@ -177,8 +188,18 @@ class MongoMCPBridge:
         try:
             self.real_client.call_tool(tool_name, arguments)
             return "mongodb-mcp-server", None
+        except TimeoutError as exc:
+            try:
+                self.real_client.call_tool(tool_name, arguments)
+                return "mongodb-mcp-server", None
+            except Exception as retry_exc:
+                return "mcp_trace_bridge", f"{exc}; retry failed: {retry_exc}"
         except Exception as exc:
             return "mcp_trace_bridge", str(exc)
+
+    def close(self) -> None:
+        if self.real_client:
+            self.real_client.close()
 
 
 class RealMongoMCPClient:
@@ -188,7 +209,7 @@ class RealMongoMCPClient:
 
     def call_tool(self, name: str, arguments: dict[str, Any]) -> Any:
         self._ensure_started()
-        return self._request("tools/call", {"name": name, "arguments": arguments}, timeout_s=8)
+        return self._request("tools/call", {"name": name, "arguments": arguments}, timeout_s=45)
 
     def _ensure_started(self) -> None:
         if self.process and self.process.poll() is None:
@@ -196,8 +217,9 @@ class RealMongoMCPClient:
         env = os.environ.copy()
         env.setdefault("MDB_MCP_CONNECTION_STRING", settings.mdb_mcp_connection_string or "")
         env.setdefault("MDB_MCP_READ_ONLY", "true")
+        command = ["mongodb-mcp-server"] if shutil.which("mongodb-mcp-server") else ["npx", "-y", "mongodb-mcp-server@latest"]
         self.process = subprocess.Popen(
-            ["npx", "-y", "mongodb-mcp-server@latest"],
+            command,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -205,16 +227,20 @@ class RealMongoMCPClient:
             bufsize=1,
             env=env,
         )
-        self._request(
-            "initialize",
-            {
-                "protocolVersion": "2024-11-05",
-                "capabilities": {},
-                "clientInfo": {"name": "venueops-agent", "version": "0.1.0"},
-            },
-            timeout_s=10,
-        )
-        self._notify("notifications/initialized", {})
+        try:
+            self._request(
+                "initialize",
+                {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {},
+                    "clientInfo": {"name": "venueops-agent", "version": "0.1.0"},
+                },
+                timeout_s=30,
+            )
+            self._notify("notifications/initialized", {})
+        except Exception:
+            self.close()
+            raise
 
     def _request(self, method: str, params: dict[str, Any], timeout_s: int) -> Any:
         if not self.process or not self.process.stdin or not self.process.stdout:
@@ -255,3 +281,13 @@ class RealMongoMCPClient:
             return self.process.stdout.readline()
         finally:
             selector.close()
+
+    def close(self) -> None:
+        if self.process and self.process.poll() is None:
+            self.process.terminate()
+            try:
+                self.process.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                self.process.kill()
+                self.process.wait(timeout=3)
+        self.process = None

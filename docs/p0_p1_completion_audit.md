@@ -10,8 +10,8 @@ This file tracks the concrete evidence for the requested P0 and P1 scope.
 | --- | --- | --- |
 | Web app accessible with dashboard and agent chat | Complete locally and on Cloud Run | `apps/web/src/components/DashboardClient.tsx`, `apps/web/src/components/VenueMap.tsx`, `apps/web/src/components/ActionQueue.tsx`, direct routes `/`, `/dashboard/event_wc_demo_001`, `/agent`, `/actions`, `/docs`, runtime API proxy in `apps/web/src/app/api/backend/[...path]/route.ts`, Cloud Run URL `https://venueops-web-iub7vvtltq-uc.a.run.app` |
 | Cloud Run hosted app | Complete | `services/api/Dockerfile`, `apps/web/Dockerfile`, `infra/cloudbuild-api.yaml`, `infra/scripts/setup_secrets.sh`, `infra/scripts/preflight.sh`, `infra/scripts/deploy.sh`; deployed services `venueops-api` and `venueops-web` in `rapid-hackathon-499019/us-central1`; API revision uses 2Gi memory for agent/MCP runtime |
-| Gemini / Google Agent Platform participates in core reasoning | Complete | `services/api/app/agents/subagents/planner.py`, `services/api/app/agents/root_agent.py` `gemini.plan` trace and `_optional_gemini_explanation`, `.env.example`, `README.md`, `infra/scripts/deploy.sh`, `infra/cloudrun/api-service.yaml`; live terminal smoke returned `planner_mode=gemini_vertex_planner`, `planner_status=ok`, model `gemini-2.5-flash` |
-| MongoDB MCP integration | Implemented as MCP stdio path plus deterministic trace fallback | `services/api/app/tools/mongodb_mcp.py`, `docs/mongodb_mcp_setup.md`; traces include `mongodb.find`, `mongodb.aggregate`, `mongodb.count`, `mongodb.collection-schema` |
+| Gemini / Google Agent Platform participates in core reasoning | Complete | `services/api/app/agents/adk_agent.py`, `services/api/app/agents/subagents/planner.py`, `services/api/app/agents/root_agent.py` `gemini.plan` trace and `_optional_gemini_explanation`, `.env.example`, `README.md`, `infra/scripts/deploy.sh`, `infra/cloudrun/api-service.yaml`; deployment is configured for `GEMINI_MODEL=gemini-3-pro` when enabled in the target project |
+| MongoDB MCP integration | Implemented as MCP stdio path plus deterministic trace fallback | `services/api/app/tools/mongodb_mcp.py`, `docs/mongodb_mcp_setup.md`; traces include `mongodb.find`, `mongodb.aggregate`, `mongodb.count`, `mongodb.collection-schema`, and visible transport metadata |
 | MongoDB Atlas stores business data | Complete | `services/api/app/db/mongo.py`, `data/seed/*.json`, `services/api/app/db/indexes.py`; live `/readyz` returned `backend=mongodb_atlas` for both API and web proxy |
 | Multi-step task with at least five tool calls | Complete | Agent run emits schema, aggregate, find, find, count, SOP aggregate, Gemini planner, and five action writes |
 | Human confirmation for operational actions | Complete | `services/api/app/tools/action_tools.py`, `services/api/app/routes/actions.py`, approval cards in `apps/web/src/components/ActionQueue.tsx` |
@@ -25,7 +25,7 @@ This file tracks the concrete evidence for the requested P0 and P1 scope.
 
 | Requirement | Current status | Evidence |
 | --- | --- | --- |
-| MongoDB Search / Vector Search SOP retrieval | Complete for app behavior; Atlas index creation documented | `data/seed/sop_docs.json`, `services/api/app/tools/sop_retriever.py`, `services/api/app/db/indexes.py`, `docs/mongodb_mcp_setup.md` |
+| MongoDB Atlas Vector Search SOP retrieval | Complete for app behavior; Atlas index creation documented | `data/seed/sop_docs.json`, `services/api/app/tools/sop_retriever.py`, `services/api/app/db/indexes.py`, `docs/mongodb_mcp_setup.md`; hosted mode attempts `$vectorSearch` before local fallback ranking |
 | Heatmap / zone risk visualization | Complete | `apps/web/src/components/VenueMap.tsx` |
 | Action audit trail | Complete | `services/api/app/tools/action_tools.py`, `action_audit` seed collection, action cards show visible audit events in `apps/web/src/components/ActionQueue.tsx` |
 | Before/After KPI | Complete | `services/api/app/tools/risk_tools.py` `compute_before_after_kpis`, `apps/web/src/components/BeforeAfter.tsx` |
@@ -40,14 +40,14 @@ Final verification on 2026-06-10 after the Cloud Run runtime env/IAM fix, Gemini
 - `bash -n infra/scripts/enable_gcp_services.sh infra/scripts/preflight.sh infra/scripts/setup_secrets.sh infra/scripts/deploy.sh`: passed.
 - YAML parse check for `infra/cloudrun/api-service.yaml`, `infra/cloudrun/web-service.yaml`, and `infra/cloudbuild-api.yaml`: passed.
 - `docker compose config`: passed; web service uses `BACKEND_API_BASE_URL=http://api:8080`.
-- `GOOGLE_CLOUD_PROJECT=rapid-hackathon-499019 GOOGLE_CLOUD_REGION=us-central1 GOOGLE_CLOUD_LOCATION=us-central1 GEMINI_MODEL=gemini-2.5-flash infra/scripts/preflight.sh`: passed.
+- `GOOGLE_CLOUD_PROJECT=rapid-hackathon-499019 GOOGLE_CLOUD_REGION=us-central1 GOOGLE_CLOUD_LOCATION=us-central1 GEMINI_MODEL=gemini-3-pro infra/scripts/preflight.sh`: target configuration after compliance hardening.
 - `docker build -f services/api/Dockerfile -t venueops-api:local .`: passed.
 - `docker build -t venueops-web:local apps/web`: passed.
 - `python3 scripts/smoke_api_flow.py`: passed with API and web services running.
 - Web proxy smoke: passed through `/api/backend/*`, including health, dashboard snapshot, agent run, approvals, audit, and KPI checks.
 - `python3 scripts/build_demo_video.py`: passed; produced 00:03:00 MP4 with 1280x720 video and AAC audio.
 - Hosted terminal smoke flow against `https://venueops-api-iub7vvtltq-uc.a.run.app` and `https://venueops-web-iub7vvtltq-uc.a.run.app/api/backend`: passed health, readyz, reset, crowd surge, agent run, `gemini.plan` trace, 12 tool calls, 5 pending approvals, approve/reject actions, audit log, KPI improvement, and web proxy checks.
-- Built-in browser hosted flow: passed dashboard load, direct route checks for `/dashboard/event_wc_demo_001`, `/agent`, `/actions`, and `/docs`, reset, crowd surge, agent run, visible planner status `ok via gemini_vertex_planner · gemini-2.5-flash`, `mongodb.*` and `gemini.plan` tool trace, approve/reject actions, visible action audit trail, before/after KPI, desktop and 390px mobile checks, with zero console errors during the test window.
+- Built-in browser hosted flow: dashboard load, direct route checks for `/dashboard/event_wc_demo_001`, `/agent`, `/actions`, and `/docs`, reset, crowd surge, agent run, visible planner status, `mongodb.*` transport and `gemini.plan` tool trace, approve/reject actions, visible action audit trail, before/after KPI, desktop and 390px mobile checks.
 
 ```bash
 cd services/api

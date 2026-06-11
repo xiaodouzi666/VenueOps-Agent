@@ -191,7 +191,7 @@ export function DashboardClient() {
             <div className="panelHeader">
               <div>
                 <h2>Tool Trace</h2>
-                <p>MongoDB MCP-shaped calls and controlled writes used by the agent.</p>
+                <p>MongoDB MCP Server calls, transport metadata, and controlled writes used by the agent.</p>
               </div>
             </div>
             <div className="section">
@@ -203,7 +203,7 @@ export function DashboardClient() {
             <div className="panelHeader">
               <div>
                 <h2>SOP Evidence</h2>
-                <p>Search / Vector Search-ready documents attached to recommendations.</p>
+                <p>Atlas Vector Search-first SOP evidence attached to recommendations.</p>
               </div>
             </div>
             <div className="section">

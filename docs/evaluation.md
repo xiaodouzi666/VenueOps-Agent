@@ -26,7 +26,7 @@ Expected outcome:
 - Gate B is the top crowd risk.
 - At least one food court SKU is critical.
 - An open facility or crowd incident is present.
-- Agent trace contains at least five MongoDB MCP-shaped tool steps.
+- Agent trace contains at least five MongoDB MCP Server tool steps and visible transport metadata.
 - Agent trace contains `gemini.plan`.
 - Five actions are created with `pending_approval`.
 - Approving staff dispatch changes staff assignments and writes audit events.

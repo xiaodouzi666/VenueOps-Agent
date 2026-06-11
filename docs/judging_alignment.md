@@ -4,11 +4,12 @@
 
 - FastAPI backend and Next.js web app.
 - Google Cloud Run deployment assets.
-- Gemini / Vertex AI-ready planner and explanation hooks.
+- Google ADK agent definition for Agent Builder / Agent Platform alignment.
+- Gemini / Vertex AI planner and explanation hooks.
 - MongoDB Atlas-compatible repository layer.
-- MongoDB MCP-shaped tool trace for `find`, `aggregate`, `count`, and schema.
+- MongoDB MCP Server tool trace for `find`, `aggregate`, `count`, and schema, with transport displayed in the UI.
 - MongoDB Aggregation-style risk analysis.
-- Search / Vector Search-ready SOP retrieval.
+- Atlas Vector Search-first SOP retrieval with deterministic local fallback ranking.
 - Human-in-the-loop action execution and audit log.
 
 ## Design

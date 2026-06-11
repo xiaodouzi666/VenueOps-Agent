@@ -4,6 +4,7 @@ import math
 import re
 from typing import Any
 
+from app.config import settings
 from app.db.mongo import BaseRepository
 from app.tools.mongodb_mcp import MongoMCPBridge
 
@@ -38,13 +39,53 @@ def retrieve_relevant_sops(
     query: str,
     top_k: int = 3,
 ) -> list[dict[str, Any]]:
+    query_vector = hashed_embedding(query)
+    if settings.use_real_mcp and repo.backend_name == "mongodb_atlas":
+        vector_docs = mcp.aggregate(
+            "sop_docs",
+            [
+                {
+                    "$vectorSearch": {
+                        "index": "sop_vector_index",
+                        "path": "embedding",
+                        "queryVector": query_vector,
+                        "numCandidates": 25,
+                        "limit": top_k,
+                    }
+                },
+                {
+                    "$project": {
+                        "_id": 1,
+                        "title": 1,
+                        "doc_type": 1,
+                        "tags": 1,
+                        "content": 1,
+                        "score": {"$meta": "vectorSearchScore"},
+                    }
+                },
+            ],
+            purpose="Run MongoDB Atlas Vector Search over SOP documents",
+        )
+        if vector_docs:
+            return [
+                {
+                    "_id": doc.get("_id"),
+                    "title": doc.get("title"),
+                    "doc_type": doc.get("doc_type"),
+                    "tags": doc.get("tags", []),
+                    "content": doc.get("content"),
+                    "score": round(float(doc.get("score") or 0.0), 3),
+                    "retrieval_mode": "mongodb_atlas_vector_search",
+                }
+                for doc in vector_docs[:top_k]
+            ]
+
     docs = mcp.aggregate(
         "sop_docs",
         [{"$match": {}}, {"$limit": 25}],
-        purpose="Search / Vector Search SOP documents for operational policy evidence",
+        purpose="Fallback-rank SOP documents for operational policy evidence when Atlas Vector Search is unavailable",
     )
     query_terms = tokenize(query)
-    query_vector = hashed_embedding(query)
     ranked: list[dict[str, Any]] = []
     for doc in docs:
         text = f"{doc.get('title', '')} {doc.get('content', '')} {' '.join(doc.get('tags', []))}"

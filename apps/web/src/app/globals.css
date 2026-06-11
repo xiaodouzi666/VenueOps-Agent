@@ -420,6 +420,12 @@ button {
   word-break: break-word;
 }
 
+.traceTransport {
+  margin-top: 4px;
+  color: var(--teal);
+  overflow-wrap: anywhere;
+}
+
 .evidenceItem {
   padding: 12px;
 }

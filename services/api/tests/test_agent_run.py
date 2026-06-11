@@ -21,6 +21,7 @@ def test_agent_run_creates_mcp_trace_and_pending_actions():
     assert "mongodb.collection-schema" in tools
     assert "gemini.plan" in tools
     assert "create_pending_action" in tools
+    assert all("transport" in step for step in result["tool_trace"])
     assert result["evidence"]
     assert result["planner"]["mode"] == "deterministic_fallback"
     assert result["planner"]["ranked_actions"]
