@@ -17,7 +17,7 @@ gcloud auth login
 export GOOGLE_CLOUD_PROJECT=your-project-id
 export GOOGLE_CLOUD_REGION=us-central1
 export GOOGLE_CLOUD_LOCATION=us-central1
-export GEMINI_MODEL=gemini-3-pro
+export GEMINI_MODEL=gemini-2.5-flash
 gcloud config set project "$GOOGLE_CLOUD_PROJECT"
 
 infra/scripts/enable_gcp_services.sh
@@ -32,7 +32,7 @@ infra/scripts/deploy.sh
 
 `deploy.sh` also grants the API Cloud Run service account access to Vertex AI and the MongoDB Secret Manager secrets. Set `CLOUD_RUN_SERVICE_ACCOUNT` before running it if you do not want to use the project compute default service account.
 
-The deployment reads `GEMINI_MODEL` from the environment. For the hackathon submission, set it to a Gemini 3 model such as `gemini-3-pro` when that model is enabled in your Google Cloud project and region.
+The deployment reads `GEMINI_MODEL` from the environment. For the hackathon submission, `gemini-2.5-flash` is the default because it is broadly available on Vertex AI and keeps the hosted demo on a real Gemini planner call.
 
 ## Demo Video
 
@@ -129,7 +129,7 @@ MDB_MCP_CONNECTION_STRING=mongodb+srv://...
 GOOGLE_CLOUD_PROJECT=your-project-id
 GOOGLE_CLOUD_LOCATION=us-central1
 GOOGLE_GENAI_USE_VERTEXAI=true
-GEMINI_MODEL=gemini-3-pro
+GEMINI_MODEL=gemini-2.5-flash
 BACKEND_API_BASE_URL=http://localhost:8080
 ```
 
